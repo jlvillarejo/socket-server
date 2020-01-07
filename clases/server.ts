@@ -36,13 +36,18 @@ export default class Server {
 
         this.io.on('connection', cliente => {
 
-            console.log('Cliente conectado');
+            //Conectar cliente
+            miSocket.conectarCliente( cliente );
 
+            // Configurar Usuario
+            miSocket.configurarUsr( cliente, this.io );
+            
             // Mensajes
             miSocket.mensaje( cliente, this.io );
             
             // Desconectar
             miSocket.desconectar( cliente );
+
 
         });
     }
