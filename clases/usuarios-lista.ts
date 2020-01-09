@@ -44,7 +44,7 @@ export class UsuariosLista {
 
     // Obtener lista de usuarios
     public getLista() {
-        return this.lista;
+        return this.lista.filter( usuario => usuario.nombre !== 'sinnombre');
     }
 
     // Obtener un usuario

@@ -41,12 +41,15 @@ export default class Server {
 
             // Configurar Usuario
             miSocket.configurarUsr( cliente, this.io );
+
+            // Obtener usuariso activos
+            miSocket.obtenerUsuarios( cliente, this.io );
             
             // Mensajes
             miSocket.mensaje( cliente, this.io );
             
             // Desconectar
-            miSocket.desconectar( cliente );
+            miSocket.desconectar( cliente, this.io );
 
 
         });
