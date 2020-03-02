@@ -39,6 +39,12 @@ export default class Server {
             //Conectar cliente
             miSocket.conectarCliente( cliente );
 
+            // configuración de colas
+            miSocket.colaSocket( cliente, this.io );
+
+            // configuración de mapas
+            miSocket.mapaSockets( cliente, this.io );
+
             // Configurar Usuario
             miSocket.configurarUsr( cliente, this.io );
 

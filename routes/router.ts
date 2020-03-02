@@ -1,37 +1,71 @@
 import { Router, Request, Response } from 'express';
 import Server from '../clases/server';
-import { usuariosConectados } from '../sockets/sockets';
+import { usuariosConectados, mapa, turno } from '../sockets/sockets';
+import { GraficaData } from '../clases/grafica';
+import { EncuestaData } from '../clases/encuesta';
 
 const router = Router();
 
-router.get('/mensajes', ( req: Request, res: Response ) => {
+const grafica = new GraficaData();
+const encuesta = new EncuestaData();
 
-    res.json({
-        ok: true,
-        mensaje: 'Todo está bien!!'
-    });
+// Colas
+router.get('/colas', ( req: Request, res: Response ) => {
+
+    res.json (turno.getUltimo() );
+})
+
+router.get('/colas/:id', ( req: Request, res: Response ) => {
+
+    const id = +req.params.id;
+
+    res.json (turno.getAtendiendo(req.params.id) );
+})
+
+router.get('/turnos', ( req: Request, res: Response ) => {
+    res.json ( turno.getAtendidos() );
+})
+
+// Mapa
+router.get('/mapa', ( req: Request, res: Response ) => {
+
+    res.json( mapa.getMarcadores() );
 
 });
 
-router.post('/mensajes', ( req: Request, res: Response ) => {
+router.get('/grafica', ( req: Request, res: Response ) => {
 
-    const cuerpo = req.body.cuerpo;
-    const de     = req.body.de;
+    res.json( grafica.getDataGrafica() );
 
-    const payload = {
-        cuerpo,
-        de
-    };
+});
 
-    const server = Server.instance;
-    server.io.emit('mensaje-nuevo', payload);
+router.post('/grafica', ( req: Request, res: Response ) => {
 
-    res.json({
-        ok: true,
-        mensaje: 'POST - Todo está bien!!',
-        cuerpo: cuerpo,
-        de: de
-    });
+    const mes   = req.body.mes;
+    const valor = Number(req.body.valor);
+
+     const server = Server.instance;
+     server.io.emit('cambio-grafica', grafica.incrementarValor(mes, valor));
+
+    res.json( grafica.getDataGrafica() );
+
+});
+
+router.get('/encuesta', ( req: Request, res: Response ) => {
+
+    res.json( encuesta.getDataEncuesta() );
+
+});
+
+router.post('/encuesta', ( req: Request, res: Response ) => {
+
+    const preg   = req.body.preg;
+    const valor = Number(req.body.valor);
+
+     const server = Server.instance;
+     server.io.emit('cambio-encuesta', encuesta.incrementarValor(preg, valor));
+
+    res.json( encuesta.getDataEncuesta()  );
 
 });
 
